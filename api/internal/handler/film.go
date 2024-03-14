@@ -22,6 +22,7 @@ func (a *FilmHandler) film(w http.ResponseWriter, req *http.Request) {
 	case http.MethodGet:
 		title := req.URL.Query().Get("title")
 		orderBy := req.URL.Query().Get("orderBy")
+		actor := req.URL.Query().Get("actor")
 		desc := false
 		if req.URL.Query().Get("sort") == "desc" {
 			desc = true
@@ -32,6 +33,8 @@ func (a *FilmHandler) film(w http.ResponseWriter, req *http.Request) {
 			jsonData = a.getFilmsSortLike(w, req, orderBy, title, desc)
 		} else if title != "" {
 			jsonData = a.getFilmsLike(w, req, title)
+		} else if actor != "" {
+			jsonData = a.getFilmActor(w, req, actor)
 		} else {
 			jsonData = a.getFilmsSort(w, req, orderBy, desc)
 		}
@@ -194,4 +197,22 @@ func (a *FilmHandler) deleteFilm(w http.ResponseWriter, req *http.Request, id in
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (a *FilmHandler) getFilmActor(w http.ResponseWriter, req *http.Request, actor string) []byte {
+	films, err := a.s.SearchFilmsWithActor(actor)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+		return nil
+	}
+
+	jsonData, err := json.Marshal(films)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		log.Printf("HTTP %d - %s", http.StatusInternalServerError, err.Error())
+		return nil
+	}
+
+	return jsonData
 }

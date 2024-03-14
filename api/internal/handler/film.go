@@ -67,6 +67,8 @@ func (a *FilmHandler) filmId(w http.ResponseWriter, req *http.Request) {
 		jsonData = a.getFilm(w, req, id)
 	case http.MethodPut:
 		a.updateFilm(w, req, id)
+	case http.MethodDelete:
+		a.deleteFilm(w, req, id)
 	default:
 		fmt.Fprintf(w, "Sorry, only GET methods are supported.")
 		log.Printf("Request not supported method")
@@ -182,4 +184,14 @@ func (a *FilmHandler) updateFilm(w http.ResponseWriter, req *http.Request, id in
 	}
 
 	w.WriteHeader(http.StatusCreated)
+}
+
+func (a *FilmHandler) deleteFilm(w http.ResponseWriter, req *http.Request, id int64) {
+	if err := a.s.DeleteFilm(id); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }

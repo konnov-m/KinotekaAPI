@@ -10,6 +10,7 @@ type ActorStorage interface {
 	CreateActor(a domain.Actor) error
 	GetActor(id int64) (domain.Actor, error)
 	UpdateActor(a domain.Actor) error
+	DeleteActor(id int64) error
 }
 
 type actorStorage struct {
@@ -63,6 +64,17 @@ WHERE id=$7;`
 
 func (s *actorStorage) UpdateActor(a domain.Actor) error {
 	_, err := s.db.Exec(updateActor, a.Name, a.Surname, a.Patronymic, a.Birthday, a.Sex, a.Information, a.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+const deleteActor = `DELETE from actors WHERE id=$1;`
+
+func (s *actorStorage) DeleteActor(id int64) error {
+	_, err := s.db.Exec(deleteActor, id)
 	if err != nil {
 		return err
 	}

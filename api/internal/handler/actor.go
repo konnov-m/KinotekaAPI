@@ -48,8 +48,10 @@ func (a *ActorHandler) actorId(w http.ResponseWriter, req *http.Request) {
 		a.getActor(w, req, id)
 	case http.MethodPut:
 		a.updateActor(w, req, id)
+	case http.MethodDelete:
+		a.deleteActor(w, req, id)
 	default:
-		fmt.Fprintf(w, "Sorry, only GET methods are supported.")
+		fmt.Fprintf(w, "Sorry, only GET, PUT and DELETE methods are supported.")
 		log.Printf("Request not supported method")
 	}
 }
@@ -124,4 +126,14 @@ func (a *ActorHandler) updateActor(w http.ResponseWriter, req *http.Request, id 
 	}
 
 	w.WriteHeader(http.StatusCreated)
+}
+
+func (a *ActorHandler) deleteActor(w http.ResponseWriter, req *http.Request, id int64) {
+	if err := a.s.DeleteActor(id); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }

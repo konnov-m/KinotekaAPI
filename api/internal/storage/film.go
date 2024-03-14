@@ -13,6 +13,7 @@ type FilmStorage interface {
 	GetFilm(id int64) (domain.Film, error)
 	CreateFilm(a domain.Film) error
 	UpdateFilm(a domain.Film) error
+	DeleteFilm(id int64) error
 }
 
 type filmStorage struct {
@@ -115,6 +116,17 @@ const updateFilm = `UPDATE films SET title=$1, year=$2, information=$3, rating=$
 
 func (s *filmStorage) UpdateFilm(a domain.Film) error {
 	_, err := s.db.Exec(updateFilm, a.Title, a.Year, a.Information, a.Rating, a.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+const deleteFilm = `DELETE from films WHERE id=$1;`
+
+func (s *filmStorage) DeleteFilm(id int64) error {
+	_, err := s.db.Exec(deleteFilm, id)
 	if err != nil {
 		return err
 	}

@@ -24,4 +24,5 @@ func (h *Handler) RegisterHandlers() {
 	http.HandleFunc("/actor/", h.actor.actorId)
 
 	http.HandleFunc("/film", h.film.film)
+	http.HandleFunc("/film/", h.film.filmId)
 }

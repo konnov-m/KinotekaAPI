@@ -11,16 +11,6 @@ WHERE id=$7;
 -- удаление информациии актера
 DELETE from actors WHERE id=$1;
 
-
-
-
-CREATE TABLE films(
-                      id SERIAL PRIMARY KEY,
-                      title varchar(150) not null,
-                      year INT not null,
-                      information varchar(1000),
-                      rating DECIMAL(3,1) CHECK (rating BETWEEN 0 AND 10)
-);
 -- добавление информации о фильме
 INSERT INTO films (title, year, information, rating)
 VALUES ($1, $2, $3, $4);

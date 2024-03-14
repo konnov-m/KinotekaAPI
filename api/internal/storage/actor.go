@@ -9,6 +9,7 @@ type ActorStorage interface {
 	GetActors() ([]domain.Actor, error)
 	CreateActor(a domain.Actor) error
 	GetActor(id int64) (domain.Actor, error)
+	UpdateActor(a domain.Actor) error
 }
 
 type actorStorage struct {
@@ -50,6 +51,18 @@ VALUES ($1, $2, $3, $4, $5, $6);`
 
 func (s *actorStorage) CreateActor(a domain.Actor) error {
 	_, err := s.db.Exec(saveActor, a.Name, a.Surname, a.Patronymic, a.Birthday, a.Sex, a.Information)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+const updateActor = `UPDATE actors SET name=$1, surname=$2, patronymic=$3, birthday=$4, sex=$5, information=$6
+WHERE id=$7;`
+
+func (s *actorStorage) UpdateActor(a domain.Actor) error {
+	_, err := s.db.Exec(updateActor, a.Name, a.Surname, a.Patronymic, a.Birthday, a.Sex, a.Information, a.ID)
 	if err != nil {
 		return err
 	}

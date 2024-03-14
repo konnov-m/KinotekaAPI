@@ -46,8 +46,8 @@ func (a *ActorHandler) actorId(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case http.MethodGet:
 		a.getActor(w, req, id)
-	//case http.MethodPost:
-	//	a.createActor(w, req)
+	case http.MethodPut:
+		a.updateActor(w, req, id)
 	default:
 		fmt.Fprintf(w, "Sorry, only GET methods are supported.")
 		log.Printf("Request not supported method")
@@ -105,4 +105,23 @@ func (a *ActorHandler) getActor(w http.ResponseWriter, req *http.Request, id int
 
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprintf(w, string(jsonData))
+}
+
+func (a *ActorHandler) updateActor(w http.ResponseWriter, req *http.Request, id int64) {
+	var actor domain.Actor
+	if err := json.NewDecoder(req.Body).Decode(&actor); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+		return
+	}
+	actor.ID = id
+
+	err := a.s.UpdateActor(actor)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
 }

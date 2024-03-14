@@ -20,6 +20,8 @@ func New(a storage.ActorStorage, f storage.FilmStorage) *Handler {
 }
 
 func (h *Handler) RegisterHandlers() {
-	http.HandleFunc("/actor", h.actor.actorsList)
+	http.HandleFunc("/actor", h.actor.actor)
+	http.HandleFunc("/actor/", h.actor.actorId)
+
 	http.HandleFunc("/film", h.film.film)
 }

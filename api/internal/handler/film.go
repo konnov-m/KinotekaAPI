@@ -24,43 +24,60 @@ func (a *FilmHandler) film(w http.ResponseWriter, req *http.Request) {
 	if title != "" && orderBy != "" {
 		films, err := a.s.GetFilmsSortLike(orderBy, title, desc)
 		if err != nil {
-			log.Fatal(err)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+			return
 		}
 
 		jsonData, err = json.Marshal(films)
 		if err != nil {
-			log.Fatal(err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			log.Printf("HTTP %d - %s", http.StatusInternalServerError, err.Error())
+			return
 		}
 	} else if title != "" {
 		films, err := a.s.GetFilmsLike(title)
 		if err != nil {
-			log.Fatal(err)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+			return
 		}
 
 		jsonData, err = json.Marshal(films)
 		if err != nil {
-			log.Fatal(err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			log.Printf("HTTP %d - %s", http.StatusInternalServerError, err.Error())
+			return
 		}
 	} else if orderBy != "" {
 		films, err := a.s.GetFilmsSort(orderBy, desc)
 		if err != nil {
-			log.Fatal(err)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+			return
 		}
 		log.Println(films)
 		jsonData, err = json.Marshal(films)
 		if err != nil {
-			log.Fatal(err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			log.Printf("HTTP %d - %s", http.StatusInternalServerError, err.Error())
+			return
 		}
 	} else {
 		films, err := a.s.GetFilms()
 		if err != nil {
-			log.Fatal(err)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+			return
 		}
-		log.Println(films)
+
 		jsonData, err = json.Marshal(films)
 		if err != nil {
-			log.Fatal(err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			log.Printf("HTTP %d - %s", http.StatusInternalServerError, err.Error())
+			return
 		}
 	}
+	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprintf(w, string(jsonData))
 }

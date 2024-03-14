@@ -4,14 +4,12 @@ import (
 	"KinotekaAPI/internal/domain"
 	"fmt"
 	"github.com/jmoiron/sqlx"
-	"log"
 )
 
 type FilmStorage interface {
 	GetFilmsLike(title string) ([]domain.Film, error)
 	GetFilmsSort(orderBy string, desc bool) ([]domain.Film, error)
 	GetFilmsSortLike(orderBy, title string, desc bool) ([]domain.Film, error)
-	GetFilms() ([]domain.Film, error)
 }
 
 type filmStorage struct {
@@ -22,18 +20,6 @@ func NewFilmStorage(conn *sqlx.DB) FilmStorage {
 	return &filmStorage{
 		db: conn,
 	}
-}
-
-const getFilms = `SELECT * FROM films`
-
-func (s *filmStorage) GetFilms() ([]domain.Film, error) {
-	var films []domain.Film
-	err := s.db.Select(&films, getFilms)
-	if err != nil {
-		return nil, err
-	}
-
-	return films, nil
 }
 
 const getFilmsLike = `SELECT * FROM films WHERE LOWER(title) LIKE '%' || LOWER($1) || '%';`
@@ -87,8 +73,6 @@ func (s *filmStorage) GetFilmsSortLike(orderBy, title string, desc bool) ([]doma
 	} else {
 		sql = fmt.Sprintf("%s %s %s", getFilmsSortLike, orderBy, "ASC")
 	}
-
-	log.Printf("sql command is %s", sql)
 
 	var films []domain.Film
 	err := s.db.Select(&films, sql, title)

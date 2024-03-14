@@ -70,7 +70,7 @@ func (a *FilmHandler) filmId(w http.ResponseWriter, req *http.Request) {
 	case http.MethodDelete:
 		a.deleteFilm(w, req, id)
 	default:
-		fmt.Fprintf(w, "Sorry, only GET methods are supported.")
+		fmt.Fprintf(w, "Sorry, only GET, PUT and DELETE methods are supported.")
 		log.Printf("Request not supported method")
 	}
 	if jsonData != nil {

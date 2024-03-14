@@ -17,7 +17,7 @@ type ActorHandler struct {
 }
 
 func (a *ActorHandler) actor(w http.ResponseWriter, req *http.Request) {
-	log.Printf("Request is \"%s\". Method is %s", req.URL.Path, req.Method)
+	log.Printf("Request is \"%s\". Method is %s", req.URL, req.Method)
 
 	switch req.Method {
 	case http.MethodGet:
@@ -31,7 +31,7 @@ func (a *ActorHandler) actor(w http.ResponseWriter, req *http.Request) {
 }
 
 func (a *ActorHandler) actorId(w http.ResponseWriter, req *http.Request) {
-	log.Printf("Request is \"%s\". Method is %s", req.URL.Path, req.Method)
+	log.Printf("Request is \"%s\". Method is %s", req.URL, req.Method)
 
 	path := req.URL.Path
 	parts := strings.Split(path, "/")
@@ -57,21 +57,40 @@ func (a *ActorHandler) actorId(w http.ResponseWriter, req *http.Request) {
 }
 
 func (a *ActorHandler) actorsList(w http.ResponseWriter, req *http.Request) {
-	actors, err := a.s.GetActors()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
-		return
-	}
-	jsonData, err := json.Marshal(actors)
-	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		log.Printf("HTTP %d - %s", http.StatusInternalServerError, err.Error())
-		return
-	}
+	withFilms := req.URL.Query().Get("withFilms")
+	if withFilms == "true" {
+		actors, err := a.s.GetActorsWithFilms()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+			return
+		}
+		jsonData, err := json.Marshal(actors)
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			log.Printf("HTTP %d - %s", http.StatusInternalServerError, err.Error())
+			return
+		}
 
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprintf(w, string(jsonData))
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintf(w, string(jsonData))
+	} else {
+		actors, err := a.s.GetActors()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+			return
+		}
+		jsonData, err := json.Marshal(actors)
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			log.Printf("HTTP %d - %s", http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintf(w, string(jsonData))
+	}
 }
 
 func (a *ActorHandler) createActor(w http.ResponseWriter, req *http.Request) {

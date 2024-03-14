@@ -16,7 +16,7 @@ type FilmHandler struct {
 }
 
 func (a *FilmHandler) film(w http.ResponseWriter, req *http.Request) {
-	log.Printf("Request is \"%s\". Method is %s", req.URL.Path, req.Method)
+	log.Printf("Request is \"%s\". Method is %s", req.URL, req.Method)
 
 	switch req.Method {
 	case http.MethodGet:
@@ -49,7 +49,7 @@ func (a *FilmHandler) film(w http.ResponseWriter, req *http.Request) {
 }
 
 func (a *FilmHandler) filmId(w http.ResponseWriter, req *http.Request) {
-	log.Printf("Request is \"%s\". Method is %s", req.URL.Path, req.Method)
+	log.Printf("Request is \"%s\". Method is %s", req.URL, req.Method)
 
 	path := req.URL.Path
 	parts := strings.Split(path, "/")

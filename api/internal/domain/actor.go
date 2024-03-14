@@ -14,3 +14,8 @@ type Actor struct {
 	Sex         string         `json:"sex"`
 	Information sql.NullString `json:"information"`
 }
+
+type ActorFilm struct {
+	Actor Actor  `db:"actors"`
+	Films []Film `db:"films"`
+}

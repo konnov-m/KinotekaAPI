@@ -2,6 +2,7 @@ package main
 
 import (
 	handler2 "KinotekaAPI/internal/handler"
+	"KinotekaAPI/internal/service"
 	"KinotekaAPI/internal/storage"
 	"fmt"
 	"github.com/jmoiron/sqlx"
@@ -27,8 +28,11 @@ func main() {
 
 	actorStorage := storage.NewActorStorage(conn)
 	filmStorage := storage.NewFilmStorage(conn)
+	userStorage := storage.NewUserStorage(conn)
 
-	handler := handler2.New(actorStorage, filmStorage)
+	userService := service.NewUserService(userStorage)
+
+	handler := handler2.New(actorStorage, filmStorage, userService)
 
 	handler.RegisterHandlers()
 

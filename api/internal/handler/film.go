@@ -2,6 +2,7 @@ package handler
 
 import (
 	"KinotekaAPI/internal/domain"
+	"KinotekaAPI/internal/service"
 	"KinotekaAPI/internal/storage"
 	"encoding/json"
 	"fmt"
@@ -13,11 +14,10 @@ import (
 
 type FilmHandler struct {
 	s storage.FilmStorage
+	u *service.UserService
 }
 
 func (a *FilmHandler) film(w http.ResponseWriter, req *http.Request) {
-	log.Printf("Request is \"%s\". Method is %s", req.URL, req.Method)
-
 	switch req.Method {
 	case http.MethodGet:
 		title := req.URL.Query().Get("title")
@@ -52,15 +52,12 @@ func (a *FilmHandler) film(w http.ResponseWriter, req *http.Request) {
 }
 
 func (a *FilmHandler) filmId(w http.ResponseWriter, req *http.Request) {
-	log.Printf("Request is \"%s\". Method is %s", req.URL, req.Method)
-
 	path := req.URL.Path
 	parts := strings.Split(path, "/")
 	filmID := parts[len(parts)-1]
 	id, err := strconv.ParseInt(filmID, 10, 64)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+		newErrorResponse(w, err, "Can't parse id from path", http.StatusBadRequest)
 		return
 	}
 	var jsonData []byte
@@ -85,15 +82,13 @@ func (a *FilmHandler) filmId(w http.ResponseWriter, req *http.Request) {
 func (a *FilmHandler) getFilmsSortLike(w http.ResponseWriter, req *http.Request, orderBy, title string, desc bool) []byte {
 	films, err := a.s.GetFilmsSortLike(orderBy, title, desc)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+		newErrorResponse(w, err, "Can't get sort films", http.StatusBadRequest)
 		return nil
 	}
 
 	jsonData, err := json.Marshal(films)
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		log.Printf("HTTP %d - %s", http.StatusInternalServerError, err.Error())
+		newErrorResponse(w, err, "Can't parse films to json", http.StatusInternalServerError)
 		return nil
 	}
 	return jsonData
@@ -102,15 +97,13 @@ func (a *FilmHandler) getFilmsSortLike(w http.ResponseWriter, req *http.Request,
 func (a *FilmHandler) getFilmsLike(w http.ResponseWriter, req *http.Request, title string) []byte {
 	films, err := a.s.GetFilmsLike(title)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+		newErrorResponse(w, err, "Can't get films", http.StatusBadRequest)
 		return nil
 	}
 
 	jsonData, err := json.Marshal(films)
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		log.Printf("HTTP %d - %s", http.StatusInternalServerError, err.Error())
+		newErrorResponse(w, err, "Can't parse films to json", http.StatusInternalServerError)
 		return nil
 	}
 
@@ -120,15 +113,13 @@ func (a *FilmHandler) getFilmsLike(w http.ResponseWriter, req *http.Request, tit
 func (a *FilmHandler) getFilmsSort(w http.ResponseWriter, req *http.Request, orderBy string, desc bool) []byte {
 	films, err := a.s.GetFilmsSort(orderBy, desc)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+		newErrorResponse(w, err, "Can't get films", http.StatusBadRequest)
 		return nil
 	}
 
 	jsonData, err := json.Marshal(films)
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		log.Printf("HTTP %d - %s", http.StatusInternalServerError, err.Error())
+		newErrorResponse(w, err, "Can't parse films to json", http.StatusInternalServerError)
 		return nil
 	}
 
@@ -138,15 +129,13 @@ func (a *FilmHandler) getFilmsSort(w http.ResponseWriter, req *http.Request, ord
 func (a *FilmHandler) getFilm(w http.ResponseWriter, req *http.Request, id int64) []byte {
 	films, err := a.s.GetFilm(id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+		newErrorResponse(w, err, "Can't get film", http.StatusBadRequest)
 		return nil
 	}
 
 	jsonData, err := json.Marshal(films)
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		log.Printf("HTTP %d - %s", http.StatusInternalServerError, err.Error())
+		newErrorResponse(w, err, "Can't parse film to json", http.StatusInternalServerError)
 		return nil
 	}
 
@@ -156,14 +145,12 @@ func (a *FilmHandler) getFilm(w http.ResponseWriter, req *http.Request, id int64
 func (a *FilmHandler) createFilm(w http.ResponseWriter, req *http.Request) {
 	var film domain.Film
 	if err := json.NewDecoder(req.Body).Decode(&film); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+		newErrorResponse(w, err, "Can't parse film from json", http.StatusBadRequest)
 		return
 	}
 	err := a.s.CreateFilm(film)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+		newErrorResponse(w, err, "Can't create film", http.StatusBadRequest)
 		return
 	}
 
@@ -173,16 +160,14 @@ func (a *FilmHandler) createFilm(w http.ResponseWriter, req *http.Request) {
 func (a *FilmHandler) updateFilm(w http.ResponseWriter, req *http.Request, id int64) {
 	var film domain.Film
 	if err := json.NewDecoder(req.Body).Decode(&film); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+		newErrorResponse(w, err, "Can't parse film from json", http.StatusBadRequest)
 		return
 	}
 	film.ID = id
 
 	err := a.s.UpdateFilm(film)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+		newErrorResponse(w, err, "Can't update film", http.StatusBadRequest)
 		return
 	}
 
@@ -191,8 +176,7 @@ func (a *FilmHandler) updateFilm(w http.ResponseWriter, req *http.Request, id in
 
 func (a *FilmHandler) deleteFilm(w http.ResponseWriter, req *http.Request, id int64) {
 	if err := a.s.DeleteFilm(id); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+		newErrorResponse(w, err, "Can't delete film", http.StatusBadRequest)
 		return
 	}
 
@@ -202,15 +186,13 @@ func (a *FilmHandler) deleteFilm(w http.ResponseWriter, req *http.Request, id in
 func (a *FilmHandler) getFilmActor(w http.ResponseWriter, req *http.Request, actor string) []byte {
 	films, err := a.s.SearchFilmsWithActor(actor)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+		newErrorResponse(w, err, "Can't get films with actor", http.StatusBadRequest)
 		return nil
 	}
 
 	jsonData, err := json.Marshal(films)
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		log.Printf("HTTP %d - %s", http.StatusInternalServerError, err.Error())
+		newErrorResponse(w, err, "Can't parse film to json", http.StatusInternalServerError)
 		return nil
 	}
 

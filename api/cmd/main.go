@@ -26,13 +26,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	actorStorage := storage.NewActorStorage(conn)
-	filmStorage := storage.NewFilmStorage(conn)
-	userStorage := storage.NewUserStorage(conn)
+	storages := storage.NewStorage(conn)
+	services := service.NewService(storages)
 
-	userService := service.NewUserService(userStorage)
-
-	handler := handler2.New(actorStorage, filmStorage, userService)
+	handler := handler2.New(services)
 
 	handler.RegisterHandlers()
 

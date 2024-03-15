@@ -7,15 +7,6 @@ import (
 	"time"
 )
 
-type ActorStorage interface {
-	GetActors() ([]domain.Actor, error)
-	CreateActor(a domain.Actor) error
-	GetActor(id int64) (domain.Actor, error)
-	UpdateActor(a domain.Actor) error
-	DeleteActor(id int64) error
-	GetActorsWithFilms() ([]domain.ActorFilm, error)
-}
-
 type actorStorage struct {
 	db *sqlx.DB
 }
@@ -150,4 +141,12 @@ func (s *actorStorage) GetActorsWithFilms() ([]domain.ActorFilm, error) {
 	}
 
 	return actorsFilmsArray, nil
+}
+
+const deleteActorsFilms = `DELETE FROM films_actors WHERE actor_id = $1`
+
+func (s *actorStorage) DeleteActorsFilms(id int64) error {
+	_, err := s.db.Exec(deleteActorsFilms, id)
+
+	return err
 }

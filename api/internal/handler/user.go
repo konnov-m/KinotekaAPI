@@ -5,12 +5,11 @@ import (
 	"KinotekaAPI/internal/service"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 )
 
 type UserHandler struct {
-	s *service.UserService
+	ser *service.Service
 }
 
 type signInInput struct {
@@ -25,23 +24,15 @@ type signUpInput struct {
 }
 
 func (h *UserHandler) signIn(w http.ResponseWriter, req *http.Request) {
-	if req.Method != http.MethodPost {
-		fmt.Fprintf(w, "Sorry, only POST methods are supported.")
-		log.Printf("Request not supported method")
-		return
-	}
 	var in signInInput
-
 	if err := json.NewDecoder(req.Body).Decode(&in); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+		newErrorResponse(w, err, "Can't decode form", http.StatusBadRequest)
 		return
 	}
 
-	token, err := h.s.GenerateToken(in.Login, in.Password)
+	token, err := h.ser.User.GenerateToken(in.Login, in.Password)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+		newErrorResponse(w, err, "Can't generate token", http.StatusBadRequest)
 		return
 	}
 	data := map[string]string{
@@ -54,16 +45,9 @@ func (h *UserHandler) signIn(w http.ResponseWriter, req *http.Request) {
 }
 
 func (h *UserHandler) signUp(w http.ResponseWriter, req *http.Request) {
-	if req.Method != http.MethodPost {
-		fmt.Fprintf(w, "Sorry, only POST methods are supported.")
-		log.Printf("Request not supported method")
-		return
-	}
-
 	var in signUpInput
 	if err := json.NewDecoder(req.Body).Decode(&in); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+		newErrorResponse(w, err, "Can't decode form", http.StatusBadRequest)
 		return
 	}
 	user := domain.User{
@@ -71,10 +55,9 @@ func (h *UserHandler) signUp(w http.ResponseWriter, req *http.Request) {
 		Password: in.Password,
 	}
 
-	err := h.s.CreateUser(user, in.Role)
+	err := h.ser.User.CreateUser(user, in.Role)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("HTTP %d - %s", http.StatusBadRequest, err.Error())
+		newErrorResponse(w, err, "Can't create user", http.StatusBadRequest)
 		return
 	}
 	w.WriteHeader(http.StatusCreated)

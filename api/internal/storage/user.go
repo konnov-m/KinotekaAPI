@@ -2,15 +2,9 @@ package storage
 
 import (
 	"KinotekaAPI/internal/domain"
+	"errors"
 	"github.com/jmoiron/sqlx"
-	"log"
 )
-
-type UserStorage interface {
-	GetUser(login, pass string) (*domain.User, error)
-	CreateUser(user domain.User, role string) error
-	GetRole(userId int64) ([]domain.Role, error)
-}
 
 type userStorage struct {
 	db *sqlx.DB
@@ -30,8 +24,7 @@ func (s *userStorage) CreateUser(user domain.User, role string) error {
 	var r domain.Role
 	err := s.db.Get(&r, getRole, role)
 	if err != nil {
-		log.Printf("There is no role")
-		return err
+		return errors.New("There is no role")
 	}
 
 	_, err = s.db.Exec(createUser, user.Login, user.Password)

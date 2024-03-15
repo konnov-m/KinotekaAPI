@@ -9,17 +9,6 @@ import (
 	"time"
 )
 
-type FilmStorage interface {
-	GetFilmsLike(title string) ([]domain.Film, error)
-	GetFilmsSort(orderBy string, desc bool) ([]domain.Film, error)
-	GetFilmsSortLike(orderBy, title string, desc bool) ([]domain.Film, error)
-	GetFilm(id int64) (domain.Film, error)
-	CreateFilm(a domain.Film) error
-	UpdateFilm(a domain.Film) error
-	DeleteFilm(id int64) error
-	SearchFilmsWithActor(substr string) ([]domain.ActorFilm, error)
-}
-
 type filmStorage struct {
 	db *sqlx.DB
 }
@@ -36,20 +25,13 @@ func (s *filmStorage) GetFilmsLike(title string) ([]domain.Film, error) {
 
 	var films []domain.Film
 	err := s.db.Select(&films, getFilmsLike, title)
-	if err != nil {
-		return nil, err
-	}
 
-	return films, nil
+	return films, err
 }
 
 const getFilmsSort = `SELECT id, title, year, information, rating FROM films ORDER BY`
 
 func (s *filmStorage) GetFilmsSort(orderBy string, desc bool) ([]domain.Film, error) {
-	if orderBy != "title" && orderBy != "year" {
-		orderBy = "rating"
-	}
-
 	var sql string
 
 	if desc {
@@ -60,11 +42,8 @@ func (s *filmStorage) GetFilmsSort(orderBy string, desc bool) ([]domain.Film, er
 
 	var films []domain.Film
 	err := s.db.Select(&films, sql)
-	if err != nil {
-		return nil, err
-	}
 
-	return films, nil
+	return films, err
 }
 
 const getFilmsSortLike = `SELECT * FROM films WHERE LOWER(title) LIKE '%' || LOWER($1) || '%' ORDER BY`
@@ -84,11 +63,8 @@ func (s *filmStorage) GetFilmsSortLike(orderBy, title string, desc bool) ([]doma
 
 	var films []domain.Film
 	err := s.db.Select(&films, sql, title)
-	if err != nil {
-		return nil, err
-	}
 
-	return films, nil
+	return films, err
 }
 
 const getFilmId = `SELECT id, title, year, information, rating
@@ -97,11 +73,8 @@ FROM films WHERE id = $1`
 func (s *filmStorage) GetFilm(id int64) (domain.Film, error) {
 	var film domain.Film
 	err := s.db.Get(&film, getFilmId, id)
-	if err != nil {
-		return domain.Film{}, err
-	}
 
-	return film, nil
+	return film, err
 }
 
 const saveFilm = `INSERT INTO films (title, year, information, rating)
@@ -109,33 +82,24 @@ VALUES ($1, $2, $3, $4);`
 
 func (s *filmStorage) CreateFilm(a domain.Film) error {
 	_, err := s.db.Exec(saveFilm, a.Title, a.Year, a.Information, a.Rating)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return err
 }
 
 const updateFilm = `UPDATE films SET title=$1, year=$2, information=$3, rating=$4 WHERE id=$5;`
 
 func (s *filmStorage) UpdateFilm(a domain.Film) error {
 	_, err := s.db.Exec(updateFilm, a.Title, a.Year, a.Information, a.Rating, a.ID)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return err
 }
 
 const deleteFilm = `DELETE from films WHERE id=$1;`
 
 func (s *filmStorage) DeleteFilm(id int64) error {
 	_, err := s.db.Exec(deleteFilm, id)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return err
 }
 
 const searchFilmsWithActor = `
@@ -223,4 +187,12 @@ func (s *filmStorage) SearchFilmsWithActor(substr string) ([]domain.ActorFilm, e
 	}
 
 	return actorsFilmsArray, nil
+}
+
+const deleteFilmsActors = `DELETE FROM films_actors WHERE film_id = $1`
+
+func (s *filmStorage) DeleteFilmsActors(id int64) error {
+	_, err := s.db.Exec(deleteFilmsActors, id)
+
+	return err
 }

@@ -50,3 +50,7 @@ func (f *filmService) DeleteFilm(id int64) error {
 func (f *filmService) SearchFilmsWithActor(substr string) ([]domain.ActorFilm, error) {
 	return f.s.SearchFilmsWithActor(substr)
 }
+
+func (s *filmService) AddActorToFilm(filmId int64, actorId []int64) error {
+	return s.s.AddActorToFilm(filmId, actorId)
+}

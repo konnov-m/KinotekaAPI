@@ -29,6 +29,7 @@ type Film interface {
 	UpdateFilm(a domain.Film) error
 	DeleteFilm(id int64) error
 	SearchFilmsWithActor(substr string) ([]domain.ActorFilm, error)
+	AddActorToFilm(filmId int64, actorId []int64) error
 }
 
 type Service struct {

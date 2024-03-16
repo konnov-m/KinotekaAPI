@@ -3,6 +3,7 @@ package storage
 import (
 	"KinotekaAPI/internal/domain"
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"strings"
@@ -195,4 +196,26 @@ func (s *filmStorage) DeleteFilmsActors(id int64) error {
 	_, err := s.db.Exec(deleteFilmsActors, id)
 
 	return err
+}
+
+const addActorToFilm = `INSERT INTO films_actors (film_id, actor_id) VALUES ($1, $2)`
+
+func (s *filmStorage) AddActorToFilm(filmId int64, actorId []int64) error {
+	tx, err := s.db.Beginx()
+	if err != nil {
+		return err
+	}
+
+	for _, el := range actorId {
+		_, err := s.db.Exec(addActorToFilm, filmId, el)
+		if err != nil {
+			err = tx.Rollback()
+			if err != nil {
+				return err
+			}
+			return errors.New(fmt.Sprintf("Can't add actor with id = %d to film with id = %d", el, filmId))
+		}
+	}
+
+	return tx.Commit()
 }

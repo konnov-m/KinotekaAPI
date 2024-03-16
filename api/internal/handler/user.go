@@ -23,6 +23,22 @@ type signUpInput struct {
 	Role     string `json:"role" binding:"required"`
 }
 
+type TokenResponse struct {
+	Token string `json:"token"`
+}
+
+// @Summary SignIn
+// @Tags sign
+// @Description login
+// @ID login
+// @Accept  json
+// @Produce  json
+// @Param input body signInInput true "credentials"
+// @Success 201 {object} TokenResponse
+// @Failure 400
+// @Failure 500
+// @Failure default
+// @Router /sign-in [post]
 func (h *UserHandler) signIn(w http.ResponseWriter, req *http.Request) {
 	var in signInInput
 	if err := json.NewDecoder(req.Body).Decode(&in); err != nil {
@@ -35,15 +51,24 @@ func (h *UserHandler) signIn(w http.ResponseWriter, req *http.Request) {
 		newErrorResponse(w, err, "Can't generate token", http.StatusBadRequest)
 		return
 	}
-	data := map[string]string{
-		"token": token,
-	}
-	jsonData, err := json.Marshal(data)
+	jsonData, err := json.Marshal(TokenResponse{Token: token})
 
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprintf(w, string(jsonData))
 }
 
+// @Summary SignUp
+// @Tags sign
+// @Description create account
+// @ID create-account
+// @Accept  json
+// @Produce  json
+// @Param input body signUpInput true "account info"
+// @Success 201 {integer} integer 1
+// @Failure 400
+// @Failure 500
+// @Failure default
+// @Router /sign-up [post]
 func (h *UserHandler) signUp(w http.ResponseWriter, req *http.Request) {
 	var in signUpInput
 	if err := json.NewDecoder(req.Body).Decode(&in); err != nil {

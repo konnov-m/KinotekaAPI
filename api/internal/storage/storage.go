@@ -15,6 +15,7 @@ type FilmStorage interface {
 	DeleteFilm(id int64) error
 	SearchFilmsWithActor(substr string) ([]domain.ActorFilm, error)
 	DeleteFilmsActors(id int64) error
+	AddActorToFilm(filmId int64, actorId []int64) error
 }
 
 type ActorStorage interface {

@@ -1,8 +1,10 @@
 package handler
 
 import (
+	_ "KinotekaAPI/docs"
 	"KinotekaAPI/internal/service"
 	"encoding/json"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"log"
 	"net/http"
 )
@@ -37,9 +39,12 @@ func (h *Handler) RegisterHandlers() {
 	http.Handle("GET /film/{id}", middlewareLog(userIdentity(http.HandlerFunc(h.film.getFilm))))
 	http.Handle("PUT /film/{id}", middlewareLog(userIdentity(http.HandlerFunc(h.film.updateFilm))))
 	http.Handle("DELETE /film/{id}", middlewareLog(userIdentity(http.HandlerFunc(h.film.deleteFilm))))
+	http.Handle("POST /film/{id}", middlewareLog(userIdentity(http.HandlerFunc(h.film.addActorsToFilm))))
 
 	http.Handle("POST /sign-up", middlewareLog(http.HandlerFunc(h.user.signUp)))
 	http.Handle("POST /sign-in", middlewareLog(http.HandlerFunc(h.user.signIn)))
+
+	http.HandleFunc("/swagger/", h.swaggerHandler)
 }
 
 func newErrorResponse(w http.ResponseWriter, err error, message string, code int) {
@@ -58,4 +63,8 @@ func newErrorResponse(w http.ResponseWriter, err error, message string, code int
 	jsonData, _ := json.Marshal(data)
 
 	http.Error(w, string(jsonData), code)
+}
+
+func (h *Handler) swaggerHandler(w http.ResponseWriter, r *http.Request) {
+	httpSwagger.WrapHandler(w, r)
 }

@@ -14,6 +14,23 @@ type FilmHandler struct {
 	ser *service.Service
 }
 
+// @Summary Get List of films
+// @Security ApiKeyAuth
+// @Tags films
+// @Description get list of films. You can search by title, actor name, surname
+// @ID get-list-films
+// @Accept  json
+// @Produce  json
+// @Param title query string false "Search by title"
+// @Param sort query string false "Sort list by desc or asc" Enums(desc,asc)
+// @Param orderBy query string false "sort by params" Enums(rating,title,year)
+// @Param actor query string false "Search by actor"
+// @Success 200 {object} []domain.Film
+// @Success 210 {object} []domain.ActorFilm
+// @Failure 400
+// @Failure 500
+// @Failure default
+// @Router /film [get]
 func (a *FilmHandler) film(w http.ResponseWriter, req *http.Request) {
 	title := req.URL.Query().Get("title")
 	orderBy := req.URL.Query().Get("orderBy")
@@ -30,6 +47,8 @@ func (a *FilmHandler) film(w http.ResponseWriter, req *http.Request) {
 		jsonData = a.getFilmsLike(w, req, title)
 	} else if actor != "" {
 		jsonData = a.getFilmActor(w, req, actor)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(210)
 	} else {
 		jsonData = a.getFilmsSort(w, req, orderBy, desc)
 	}
@@ -87,6 +106,17 @@ func (a *FilmHandler) getFilmsSort(w http.ResponseWriter, req *http.Request, ord
 	return jsonData
 }
 
+// @Summary Get Film by ID
+// @Security ApiKeyAuth
+// @Tags films
+// @Description Get Film by ID
+// @ID get-film-by-id
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} domain.Actor
+// @Failure 400
+// @Failure default
+// @Router /film/{id} [GET]
 func (a *FilmHandler) getFilm(w http.ResponseWriter, req *http.Request) {
 	id, err := strconv.ParseInt(req.PathValue("id"), 10, 64)
 	if err != nil {
@@ -110,6 +140,19 @@ func (a *FilmHandler) getFilm(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, string(jsonData))
 }
 
+// @Summary Create Film
+// @Security ApiKeyAuth
+// @Tags films
+// @Description Create Film. You must have admin role.
+// @ID create-film
+// @Accept  json
+// @Produce  json
+// @Param input body domain.Film true "Film"
+// @Success 201
+// @Failure 400
+// @Failure 500
+// @Failure default
+// @Router /film [POST]
 func (a *FilmHandler) createFilm(w http.ResponseWriter, req *http.Request) {
 	isAdmin, err := a.ser.User.IsAdmin(req.Context().Value("userID").(int64))
 	if err != nil {
@@ -135,6 +178,18 @@ func (a *FilmHandler) createFilm(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
+// @Summary Update Film by ID
+// @Security ApiKeyAuth
+// @Tags films
+// @Description Update Film by ID. You must have admin role.
+// @ID update-film-by-id
+// @Accept  json
+// @Produce  json
+// @Param input body domain.Film true "Film"
+// @Success 201
+// @Failure 400
+// @Failure default
+// @Router /film/{id} [PUT]
 func (a *FilmHandler) updateFilm(w http.ResponseWriter, req *http.Request) {
 	isAdmin, err := a.ser.User.IsAdmin(req.Context().Value("userID").(int64))
 	if err != nil {
@@ -168,6 +223,18 @@ func (a *FilmHandler) updateFilm(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
+// @Summary Delete Film by ID
+// @Security ApiKeyAuth
+// @Tags films
+// @Description Delete Film by ID. You must have admin role.
+// @ID delete-film-by-id
+// @Accept  json
+// @Produce  json
+// @Param input body domain.Film true "Film"
+// @Success 201
+// @Failure 400
+// @Failure default
+// @Router /film/{id} [DELETE]
 func (a *FilmHandler) deleteFilm(w http.ResponseWriter, req *http.Request) {
 	isAdmin, err := a.ser.User.IsAdmin(req.Context().Value("userID").(int64))
 	if err != nil {
@@ -207,4 +274,50 @@ func (a *FilmHandler) getFilmActor(w http.ResponseWriter, req *http.Request, act
 	}
 
 	return jsonData
+}
+
+type Data struct {
+	Actors []int64 `json:"actors"`
+}
+
+// @Summary Add actors to film by id
+// @Security ApiKeyAuth
+// @Tags films
+// @Description Add actors to film by id. You must have admin role.
+// @ID add-actor-to-film-by-id
+// @Accept  json
+// @Produce  json
+// @Param input body Data true "Array of actor's id"
+// @Success 201
+// @Failure 400
+// @Failure default
+// @Router /film/{id} [POST]
+func (a *FilmHandler) addActorsToFilm(w http.ResponseWriter, req *http.Request) {
+	isAdmin, err := a.ser.User.IsAdmin(req.Context().Value("userID").(int64))
+	if err != nil {
+		newErrorResponse(w, err, "", http.StatusBadRequest)
+		return
+	}
+	if !isAdmin {
+		newErrorResponse(w, errors.New("you don't have enough permissions"), "", http.StatusBadRequest)
+		return
+	}
+	id, err := strconv.ParseInt(req.PathValue("id"), 10, 64)
+	if err != nil {
+		newErrorResponse(w, err, "Can't parse id from path", http.StatusBadRequest)
+		return
+	}
+
+	var data Data
+	if err := json.NewDecoder(req.Body).Decode(&data); err != nil {
+		newErrorResponse(w, err, "Can't parse data from json", http.StatusBadRequest)
+		return
+	}
+	err = a.ser.Film.AddActorToFilm(id, data.Actors)
+	if err != nil {
+		newErrorResponse(w, err, "", http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }

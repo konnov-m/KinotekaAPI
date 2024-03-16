@@ -15,6 +15,20 @@ type ActorHandler struct {
 	ser *service.Service
 }
 
+// @Summary Get List of actors
+// @Security ApiKeyAuth
+// @Tags actors
+// @Description get list of actors
+// @ID get-list-actor
+// @Accept  json
+// @Produce  json
+// @Param withFilms query boolean false "Include films information" Enums(true,false)
+// @Success 200 {object} []domain.Actor "without films"
+// @Success 210 {object} []domain.ActorFilm "with films"
+// @Failure 400
+// @Failure 500
+// @Failure default
+// @Router /actor [get]
 func (a *ActorHandler) actorsList(w http.ResponseWriter, req *http.Request) {
 	withFilms := req.URL.Query().Get("withFilms")
 	if withFilms == "true" {
@@ -30,6 +44,7 @@ func (a *ActorHandler) actorsList(w http.ResponseWriter, req *http.Request) {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(210)
 		fmt.Fprintf(w, string(jsonData))
 	} else {
 		actors, err := a.ser.Actor.GetActors()
@@ -48,6 +63,18 @@ func (a *ActorHandler) actorsList(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+// @Summary Create actor
+// @Security ApiKeyAuth
+// @Tags actors
+// @Description Create actor. You must have admin role.
+// @ID create-actor
+// @Accept  json
+// @Produce  json
+// @Param input body domain.Actor true "Actor"
+// @Success 201
+// @Failure 400
+// @Failure default
+// @Router /actor [POST]
 func (a *ActorHandler) createActor(w http.ResponseWriter, req *http.Request) {
 	isAdmin, err := a.ser.User.IsAdmin(req.Context().Value("userID").(int64))
 	if err != nil {
@@ -73,6 +100,17 @@ func (a *ActorHandler) createActor(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
+// @Summary Get actor by ID
+// @Security ApiKeyAuth
+// @Tags actors
+// @Description Get actor by ID
+// @ID get-actor-by-id
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} domain.Actor
+// @Failure 400
+// @Failure default
+// @Router /actor/{id} [GET]
 func (a *ActorHandler) getActor(w http.ResponseWriter, req *http.Request) {
 	id, err := strconv.ParseInt(req.PathValue("id"), 10, 64)
 	if err != nil {
@@ -96,6 +134,18 @@ func (a *ActorHandler) getActor(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, string(jsonData))
 }
 
+// @Summary Update actor by ID
+// @Security ApiKeyAuth
+// @Tags actors
+// @Description Update actor by ID. You must have admin role.
+// @ID update-actor-by-id
+// @Accept  json
+// @Produce  json
+// @Param input body domain.Actor true "Actor"
+// @Success 201
+// @Failure 400
+// @Failure default
+// @Router /actor/{id} [PUT]
 func (a *ActorHandler) updateActor(w http.ResponseWriter, req *http.Request) {
 	isAdmin, err := a.ser.User.IsAdmin(req.Context().Value("userID").(int64))
 	if err != nil {
@@ -129,6 +179,17 @@ func (a *ActorHandler) updateActor(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
+// @Summary Delete actor by ID
+// @Security ApiKeyAuth
+// @Tags actors
+// @Description Delete actor by ID. You must have admin role.
+// @ID delete-actor-by-id
+// @Accept  json
+// @Produce  json
+// @Success 204
+// @Failure 400
+// @Failure default
+// @Router /actor/{id} [DELETE]
 func (a *ActorHandler) deleteActor(w http.ResponseWriter, req *http.Request) {
 	isAdmin, err := a.ser.User.IsAdmin(req.Context().Value("userID").(int64))
 	if err != nil {

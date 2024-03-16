@@ -1,0 +1,480 @@
+basePath: /
+definitions:
+  KinotekaAPI_internal_domain.Actor:
+    properties:
+      birthday:
+        type: string
+      id:
+        type: integer
+      information:
+        $ref: '#/definitions/sql.NullString'
+      name:
+        type: string
+      patronymic:
+        $ref: '#/definitions/sql.NullString'
+      sex:
+        type: string
+      surname:
+        type: string
+    type: object
+  KinotekaAPI_internal_domain.ActorFilm:
+    properties:
+      actor:
+        $ref: '#/definitions/KinotekaAPI_internal_domain.Actor'
+      films:
+        items:
+          $ref: '#/definitions/KinotekaAPI_internal_domain.Film'
+        type: array
+    type: object
+  KinotekaAPI_internal_domain.Film:
+    properties:
+      id:
+        type: integer
+      information:
+        $ref: '#/definitions/sql.NullString'
+      rating:
+        $ref: '#/definitions/sql.NullFloat64'
+      title:
+        type: string
+      year:
+        type: integer
+    type: object
+  internal_handler.Data:
+    properties:
+      actors:
+        items:
+          type: integer
+        type: array
+    type: object
+  internal_handler.TokenResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  internal_handler.signInInput:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    required:
+    - login
+    - password
+    type: object
+  internal_handler.signUpInput:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+    required:
+    - login
+    - password
+    - role
+    type: object
+  sql.NullFloat64:
+    properties:
+      float64:
+        type: number
+      valid:
+        description: Valid is true if Float64 is not NULL
+        type: boolean
+    type: object
+  sql.NullString:
+    properties:
+      string:
+        type: string
+      valid:
+        description: Valid is true if String is not NULL
+        type: boolean
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API Server for kinoteka Application
+  title: Kinoteka API
+  version: "1.0"
+paths:
+  /actor:
+    get:
+      consumes:
+      - application/json
+      description: get list of actors
+      operationId: get-list-actor
+      parameters:
+      - description: Include films information
+        enum:
+        - true
+        - false
+        in: query
+        name: withFilms
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: without films
+          schema:
+            items:
+              $ref: '#/definitions/KinotekaAPI_internal_domain.Actor'
+            type: array
+        "210":
+          description: with films
+          schema:
+            items:
+              $ref: '#/definitions/KinotekaAPI_internal_domain.ActorFilm'
+            type: array
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+        default:
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: Get List of actors
+      tags:
+      - actors
+    post:
+      consumes:
+      - application/json
+      description: Create actor. You must have admin role.
+      operationId: create-actor
+      parameters:
+      - description: Actor
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/KinotekaAPI_internal_domain.Actor'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+        default:
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: Create actor
+      tags:
+      - actors
+  /actor/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete actor by ID. You must have admin role.
+      operationId: delete-actor-by-id
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+        default:
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: Delete actor by ID
+      tags:
+      - actors
+    get:
+      consumes:
+      - application/json
+      description: Get actor by ID
+      operationId: get-actor-by-id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/KinotekaAPI_internal_domain.Actor'
+        "400":
+          description: Bad Request
+        default:
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: Get actor by ID
+      tags:
+      - actors
+    put:
+      consumes:
+      - application/json
+      description: Update actor by ID. You must have admin role.
+      operationId: update-actor-by-id
+      parameters:
+      - description: Actor
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/KinotekaAPI_internal_domain.Actor'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+        default:
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: Update actor by ID
+      tags:
+      - actors
+  /film:
+    get:
+      consumes:
+      - application/json
+      description: get list of films. You can search by title, actor name, surname
+      operationId: get-list-films
+      parameters:
+      - description: Search by title
+        in: query
+        name: title
+        type: string
+      - description: Sort list by desc or asc
+        enum:
+        - desc
+        - asc
+        in: query
+        name: sort
+        type: string
+      - description: sort by params
+        enum:
+        - rating
+        - title
+        - year
+        in: query
+        name: orderBy
+        type: string
+      - description: Search by actor
+        in: query
+        name: actor
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/KinotekaAPI_internal_domain.Film'
+            type: array
+        "210":
+          description: ""
+          schema:
+            items:
+              $ref: '#/definitions/KinotekaAPI_internal_domain.ActorFilm'
+            type: array
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+        default:
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: Get List of films
+      tags:
+      - films
+    post:
+      consumes:
+      - application/json
+      description: Create Film. You must have admin role.
+      operationId: create-film
+      parameters:
+      - description: Film
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/KinotekaAPI_internal_domain.Film'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+        default:
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: Create Film
+      tags:
+      - films
+  /film/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Film by ID. You must have admin role.
+      operationId: delete-film-by-id
+      parameters:
+      - description: Film
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/KinotekaAPI_internal_domain.Film'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+        default:
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Film by ID
+      tags:
+      - films
+    get:
+      consumes:
+      - application/json
+      description: Get Film by ID
+      operationId: get-film-by-id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/KinotekaAPI_internal_domain.Actor'
+        "400":
+          description: Bad Request
+        default:
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: Get Film by ID
+      tags:
+      - films
+    post:
+      consumes:
+      - application/json
+      description: Add actors to film by id. You must have admin role.
+      operationId: add-actor-to-film-by-id
+      parameters:
+      - description: Array of actor's id
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.Data'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+        default:
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: Add actors to film by id
+      tags:
+      - films
+    put:
+      consumes:
+      - application/json
+      description: Update Film by ID. You must have admin role.
+      operationId: update-film-by-id
+      parameters:
+      - description: Film
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/KinotekaAPI_internal_domain.Film'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+        default:
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: Update Film by ID
+      tags:
+      - films
+  /sign-in:
+    post:
+      consumes:
+      - application/json
+      description: login
+      operationId: login
+      parameters:
+      - description: credentials
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.signInInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_handler.TokenResponse'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+        default:
+          description: ""
+      summary: SignIn
+      tags:
+      - sign
+  /sign-up:
+    post:
+      consumes:
+      - application/json
+      description: create account
+      operationId: create-account
+      parameters:
+      - description: account info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.signUpInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+        default:
+          description: ""
+      summary: SignUp
+      tags:
+      - sign
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

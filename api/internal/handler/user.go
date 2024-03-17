@@ -16,17 +16,17 @@ type UserHandler struct {
 type signInInput struct {
 	Login    string `json:"login" binding:"required"`
 	Password string `json:"password" binding:"required"`
-}
+} // @name signInInput
 
 type signUpInput struct {
 	Login    string `json:"login" binding:"required"`
 	Password string `json:"password" binding:"required"`
 	Role     string `json:"role" binding:"required"`
-}
+} // @name signUpInput
 
 type TokenResponse struct {
 	Token string `json:"token"`
-}
+} // @name TokenResponse
 
 const defaultRole = "user"
 

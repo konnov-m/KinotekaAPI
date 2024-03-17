@@ -22,7 +22,7 @@ Run tests
 
 # Info
 
-Swagger available on http://localhost:8080/swagger/
+Swagger available on http://localhost:8080/swagger
 
 pgAdmin available on http://localhost:5050
 

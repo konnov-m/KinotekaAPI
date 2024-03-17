@@ -46,7 +46,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/KinotekaAPI_internal_domain.Actor"
+                                "$ref": "#/definitions/Actor"
                             }
                         }
                     },
@@ -55,7 +55,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/KinotekaAPI_internal_domain.ActorFilm"
+                                "$ref": "#/definitions/ActorFilm"
                             }
                         }
                     },
@@ -95,7 +95,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/KinotekaAPI_internal_domain.Actor"
+                            "$ref": "#/definitions/Actor"
                         }
                     }
                 ],
@@ -135,7 +135,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/KinotekaAPI_internal_domain.Actor"
+                            "$ref": "#/definitions/Actor"
                         }
                     },
                     "400": {
@@ -171,7 +171,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/KinotekaAPI_internal_domain.Actor"
+                            "$ref": "#/definitions/Actor"
                         }
                     }
                 ],
@@ -278,7 +278,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/KinotekaAPI_internal_domain.Film"
+                                "$ref": "#/definitions/Film"
                             }
                         }
                     },
@@ -287,7 +287,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/KinotekaAPI_internal_domain.ActorFilm"
+                                "$ref": "#/definitions/ActorFilm"
                             }
                         }
                     },
@@ -327,7 +327,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/KinotekaAPI_internal_domain.Film"
+                            "$ref": "#/definitions/Film"
                         }
                     }
                 ],
@@ -370,7 +370,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/KinotekaAPI_internal_domain.Actor"
+                            "$ref": "#/definitions/Actor"
                         }
                     },
                     "400": {
@@ -406,7 +406,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/KinotekaAPI_internal_domain.Film"
+                            "$ref": "#/definitions/Film"
                         }
                     }
                 ],
@@ -447,7 +447,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_handler.Data"
+                            "$ref": "#/definitions/Data"
                         }
                     }
                 ],
@@ -488,7 +488,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/KinotekaAPI_internal_domain.Film"
+                            "$ref": "#/definitions/Film"
                         }
                     }
                 ],
@@ -526,7 +526,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_handler.signInInput"
+                            "$ref": "#/definitions/signInInput"
                         }
                     }
                 ],
@@ -534,7 +534,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/internal_handler.TokenResponse"
+                            "$ref": "#/definitions/TokenResponse"
                         }
                     },
                     "400": {
@@ -570,7 +570,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_handler.signUpInput"
+                            "$ref": "#/definitions/signUpInput"
                         }
                     }
                 ],
@@ -595,7 +595,7 @@
         }
     },
     "definitions": {
-        "KinotekaAPI_internal_domain.Actor": {
+        "Actor": {
             "type": "object",
             "properties": {
                 "birthday": {
@@ -621,21 +621,32 @@
                 }
             }
         },
-        "KinotekaAPI_internal_domain.ActorFilm": {
+        "ActorFilm": {
             "type": "object",
             "properties": {
                 "actor": {
-                    "$ref": "#/definitions/KinotekaAPI_internal_domain.Actor"
+                    "$ref": "#/definitions/Actor"
                 },
                 "films": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/KinotekaAPI_internal_domain.Film"
+                        "$ref": "#/definitions/Film"
                     }
                 }
             }
         },
-        "KinotekaAPI_internal_domain.Film": {
+        "Data": {
+            "type": "object",
+            "properties": {
+                "actors": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "Film": {
             "type": "object",
             "properties": {
                 "id": {
@@ -655,18 +666,7 @@
                 }
             }
         },
-        "internal_handler.Data": {
-            "type": "object",
-            "properties": {
-                "actors": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                }
-            }
-        },
-        "internal_handler.TokenResponse": {
+        "TokenResponse": {
             "type": "object",
             "properties": {
                 "token": {
@@ -674,7 +674,7 @@
                 }
             }
         },
-        "internal_handler.signInInput": {
+        "signInInput": {
             "type": "object",
             "required": [
                 "login",
@@ -689,7 +689,7 @@
                 }
             }
         },
-        "internal_handler.signUpInput": {
+        "signUpInput": {
             "type": "object",
             "required": [
                 "login",

@@ -1,4 +1,6 @@
 build:
+	cd ./api && go mod tidy
+	cd ./api && go mod vendor
 	docker build -t backend:1 --file ./api/Dockerfile .
 	docker build -t migrate:1 --file ./migrate/Dockerfile .
 	docker-compose build

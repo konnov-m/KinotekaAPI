@@ -52,7 +52,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/KinotekaAPI_internal_domain.Actor"
+                                "$ref": "#/definitions/Actor"
                             }
                         }
                     },
@@ -61,7 +61,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/KinotekaAPI_internal_domain.ActorFilm"
+                                "$ref": "#/definitions/ActorFilm"
                             }
                         }
                     },
@@ -101,7 +101,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/KinotekaAPI_internal_domain.Actor"
+                            "$ref": "#/definitions/Actor"
                         }
                     }
                 ],
@@ -141,7 +141,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/KinotekaAPI_internal_domain.Actor"
+                            "$ref": "#/definitions/Actor"
                         }
                     },
                     "400": {
@@ -177,7 +177,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/KinotekaAPI_internal_domain.Actor"
+                            "$ref": "#/definitions/Actor"
                         }
                     }
                 ],
@@ -284,7 +284,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/KinotekaAPI_internal_domain.Film"
+                                "$ref": "#/definitions/Film"
                             }
                         }
                     },
@@ -293,7 +293,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/KinotekaAPI_internal_domain.ActorFilm"
+                                "$ref": "#/definitions/ActorFilm"
                             }
                         }
                     },
@@ -333,7 +333,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/KinotekaAPI_internal_domain.Film"
+                            "$ref": "#/definitions/Film"
                         }
                     }
                 ],
@@ -376,7 +376,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/KinotekaAPI_internal_domain.Actor"
+                            "$ref": "#/definitions/Actor"
                         }
                     },
                     "400": {
@@ -412,7 +412,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/KinotekaAPI_internal_domain.Film"
+                            "$ref": "#/definitions/Film"
                         }
                     }
                 ],
@@ -453,7 +453,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_handler.Data"
+                            "$ref": "#/definitions/Data"
                         }
                     }
                 ],
@@ -494,7 +494,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/KinotekaAPI_internal_domain.Film"
+                            "$ref": "#/definitions/Film"
                         }
                     }
                 ],
@@ -532,7 +532,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_handler.signInInput"
+                            "$ref": "#/definitions/signInInput"
                         }
                     }
                 ],
@@ -540,7 +540,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/internal_handler.TokenResponse"
+                            "$ref": "#/definitions/TokenResponse"
                         }
                     },
                     "400": {
@@ -576,7 +576,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_handler.signUpInput"
+                            "$ref": "#/definitions/signUpInput"
                         }
                     }
                 ],
@@ -601,7 +601,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "KinotekaAPI_internal_domain.Actor": {
+        "Actor": {
             "type": "object",
             "properties": {
                 "birthday": {
@@ -627,21 +627,32 @@ const docTemplate = `{
                 }
             }
         },
-        "KinotekaAPI_internal_domain.ActorFilm": {
+        "ActorFilm": {
             "type": "object",
             "properties": {
                 "actor": {
-                    "$ref": "#/definitions/KinotekaAPI_internal_domain.Actor"
+                    "$ref": "#/definitions/Actor"
                 },
                 "films": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/KinotekaAPI_internal_domain.Film"
+                        "$ref": "#/definitions/Film"
                     }
                 }
             }
         },
-        "KinotekaAPI_internal_domain.Film": {
+        "Data": {
+            "type": "object",
+            "properties": {
+                "actors": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "Film": {
             "type": "object",
             "properties": {
                 "id": {
@@ -661,18 +672,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_handler.Data": {
-            "type": "object",
-            "properties": {
-                "actors": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                }
-            }
-        },
-        "internal_handler.TokenResponse": {
+        "TokenResponse": {
             "type": "object",
             "properties": {
                 "token": {
@@ -680,7 +680,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_handler.signInInput": {
+        "signInInput": {
             "type": "object",
             "required": [
                 "login",
@@ -695,7 +695,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_handler.signUpInput": {
+        "signUpInput": {
             "type": "object",
             "required": [
                 "login",

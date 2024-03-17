@@ -279,7 +279,7 @@ func (a *FilmHandler) getFilmActor(w http.ResponseWriter, req *http.Request, act
 
 type Data struct {
 	Actors []int64 `json:"actors"`
-}
+} // @name Data
 
 // @Summary Add actors to film by id
 // @Security ApiKeyAuth

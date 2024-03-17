@@ -1,6 +1,6 @@
 basePath: /
 definitions:
-  KinotekaAPI_internal_domain.Actor:
+  Actor:
     properties:
       birthday:
         type: string
@@ -17,16 +17,23 @@ definitions:
       surname:
         type: string
     type: object
-  KinotekaAPI_internal_domain.ActorFilm:
+  ActorFilm:
     properties:
       actor:
-        $ref: '#/definitions/KinotekaAPI_internal_domain.Actor'
+        $ref: '#/definitions/Actor'
       films:
         items:
-          $ref: '#/definitions/KinotekaAPI_internal_domain.Film'
+          $ref: '#/definitions/Film'
         type: array
     type: object
-  KinotekaAPI_internal_domain.Film:
+  Data:
+    properties:
+      actors:
+        items:
+          type: integer
+        type: array
+    type: object
+  Film:
     properties:
       id:
         type: integer
@@ -39,19 +46,12 @@ definitions:
       year:
         type: integer
     type: object
-  internal_handler.Data:
-    properties:
-      actors:
-        items:
-          type: integer
-        type: array
-    type: object
-  internal_handler.TokenResponse:
+  TokenResponse:
     properties:
       token:
         type: string
     type: object
-  internal_handler.signInInput:
+  signInInput:
     properties:
       login:
         type: string
@@ -61,7 +61,7 @@ definitions:
     - login
     - password
     type: object
-  internal_handler.signUpInput:
+  signUpInput:
     properties:
       login:
         type: string
@@ -118,13 +118,13 @@ paths:
           description: without films
           schema:
             items:
-              $ref: '#/definitions/KinotekaAPI_internal_domain.Actor'
+              $ref: '#/definitions/Actor'
             type: array
         "210":
           description: with films
           schema:
             items:
-              $ref: '#/definitions/KinotekaAPI_internal_domain.ActorFilm'
+              $ref: '#/definitions/ActorFilm'
             type: array
         "400":
           description: Bad Request
@@ -148,7 +148,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/KinotekaAPI_internal_domain.Actor'
+          $ref: '#/definitions/Actor'
       produces:
       - application/json
       responses:
@@ -194,7 +194,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/KinotekaAPI_internal_domain.Actor'
+            $ref: '#/definitions/Actor'
         "400":
           description: Bad Request
         default:
@@ -215,7 +215,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/KinotekaAPI_internal_domain.Actor'
+          $ref: '#/definitions/Actor'
       produces:
       - application/json
       responses:
@@ -267,13 +267,13 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/KinotekaAPI_internal_domain.Film'
+              $ref: '#/definitions/Film'
             type: array
         "210":
           description: ""
           schema:
             items:
-              $ref: '#/definitions/KinotekaAPI_internal_domain.ActorFilm'
+              $ref: '#/definitions/ActorFilm'
             type: array
         "400":
           description: Bad Request
@@ -297,7 +297,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/KinotekaAPI_internal_domain.Film'
+          $ref: '#/definitions/Film'
       produces:
       - application/json
       responses:
@@ -326,7 +326,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/KinotekaAPI_internal_domain.Film'
+          $ref: '#/definitions/Film'
       produces:
       - application/json
       responses:
@@ -352,7 +352,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/KinotekaAPI_internal_domain.Actor'
+            $ref: '#/definitions/Actor'
         "400":
           description: Bad Request
         default:
@@ -373,7 +373,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/internal_handler.Data'
+          $ref: '#/definitions/Data'
       produces:
       - application/json
       responses:
@@ -399,7 +399,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/KinotekaAPI_internal_domain.Film'
+          $ref: '#/definitions/Film'
       produces:
       - application/json
       responses:
@@ -426,14 +426,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/internal_handler.signInInput'
+          $ref: '#/definitions/signInInput'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/internal_handler.TokenResponse'
+            $ref: '#/definitions/TokenResponse'
         "400":
           description: Bad Request
         "500":
@@ -455,7 +455,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/internal_handler.signUpInput'
+          $ref: '#/definitions/signUpInput'
       produces:
       - application/json
       responses:

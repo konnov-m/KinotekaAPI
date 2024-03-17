@@ -53,7 +53,7 @@ func (u *userService) GenerateToken(login, password string) (string, error) {
 	return token.SignedString([]byte(signingKey))
 }
 
-func ParseToken(accessToken string) (int64, error) {
+func (u *userService) ParseToken(accessToken string) (int64, error) {
 	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")

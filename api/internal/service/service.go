@@ -11,6 +11,7 @@ type User interface {
 	CreateUser(user domain.User, role string) error
 	GenerateToken(login, password string) (string, error)
 	IsAdmin(id int64) (bool, error)
+	ParseToken(accessToken string) (int64, error)
 }
 
 type Actor interface {

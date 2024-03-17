@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"KinotekaAPI/internal/service"
 	"context"
+	"errors"
 	"log"
 	"net/http"
 	"strings"
@@ -15,21 +15,26 @@ func middlewareLog(next http.Handler) http.Handler {
 	})
 }
 
-func userIdentity(next http.Handler) http.Handler {
+func (h *Handler) userIdentity(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
-			w.WriteHeader(http.StatusUnauthorized)
+			newErrorResponse(w, errors.New("empty auth header"), "empty auth header", http.StatusUnauthorized)
 			return
 		}
 
 		bearerToken := strings.Split(authHeader, " ")
 		if len(bearerToken) != 2 || bearerToken[0] != "Bearer" {
-			w.WriteHeader(http.StatusUnauthorized)
+			newErrorResponse(w, errors.New("invalid auth header"), "invalid auth header", http.StatusUnauthorized)
 			return
 		}
 
-		userId, err := service.ParseToken(bearerToken[1])
+		if len(bearerToken[1]) == 0 {
+			newErrorResponse(w, errors.New("token is empty"), "token is empty", http.StatusUnauthorized)
+			return
+		}
+
+		userId, err := h.ser.User.ParseToken(bearerToken[1])
 		if err != nil {
 			newErrorResponse(w, err, "Can't parse token", http.StatusUnauthorized)
 			return

@@ -13,6 +13,7 @@ type Handler struct {
 	actor *ActorHandler
 	film  *FilmHandler
 	user  *UserHandler
+	ser   *service.Service
 }
 
 func New(ser *service.Service) *Handler {
@@ -20,26 +21,27 @@ func New(ser *service.Service) *Handler {
 		actor: &ActorHandler{ser: ser},
 		film:  &FilmHandler{ser: ser},
 		user:  &UserHandler{ser: ser},
+		ser:   ser,
 	}
 
 	return s
 }
 
 func (h *Handler) RegisterHandlers() {
-	http.Handle("POST /actor", middlewareLog(userIdentity(http.HandlerFunc(h.actor.createActor))))
-	http.Handle("GET /actor", middlewareLog(userIdentity(http.HandlerFunc(h.actor.actorsList))))
+	http.Handle("POST /actor", middlewareLog(h.userIdentity(http.HandlerFunc(h.actor.createActor))))
+	http.Handle("GET /actor", middlewareLog(h.userIdentity(http.HandlerFunc(h.actor.actorsList))))
 
-	http.Handle("GET /actor/{id}", middlewareLog(userIdentity(http.HandlerFunc(h.actor.getActor))))
-	http.Handle("PUT /actor/{id}", middlewareLog(userIdentity(http.HandlerFunc(h.actor.updateActor))))
-	http.Handle("DELETE /actor/{id}", middlewareLog(userIdentity(http.HandlerFunc(h.actor.deleteActor))))
+	http.Handle("GET /actor/{id}", middlewareLog(h.userIdentity(http.HandlerFunc(h.actor.getActor))))
+	http.Handle("PUT /actor/{id}", middlewareLog(h.userIdentity(http.HandlerFunc(h.actor.updateActor))))
+	http.Handle("DELETE /actor/{id}", middlewareLog(h.userIdentity(http.HandlerFunc(h.actor.deleteActor))))
 
-	http.Handle("GET /film", middlewareLog(userIdentity(http.HandlerFunc(h.film.film))))
-	http.Handle("POST /film", middlewareLog(userIdentity(http.HandlerFunc(h.film.createFilm))))
+	http.Handle("GET /film", middlewareLog(h.userIdentity(http.HandlerFunc(h.film.film))))
+	http.Handle("POST /film", middlewareLog(h.userIdentity(http.HandlerFunc(h.film.createFilm))))
 
-	http.Handle("GET /film/{id}", middlewareLog(userIdentity(http.HandlerFunc(h.film.getFilm))))
-	http.Handle("PUT /film/{id}", middlewareLog(userIdentity(http.HandlerFunc(h.film.updateFilm))))
-	http.Handle("DELETE /film/{id}", middlewareLog(userIdentity(http.HandlerFunc(h.film.deleteFilm))))
-	http.Handle("POST /film/{id}", middlewareLog(userIdentity(http.HandlerFunc(h.film.addActorsToFilm))))
+	http.Handle("GET /film/{id}", middlewareLog(h.userIdentity(http.HandlerFunc(h.film.getFilm))))
+	http.Handle("PUT /film/{id}", middlewareLog(h.userIdentity(http.HandlerFunc(h.film.updateFilm))))
+	http.Handle("DELETE /film/{id}", middlewareLog(h.userIdentity(http.HandlerFunc(h.film.deleteFilm))))
+	http.Handle("POST /film/{id}", middlewareLog(h.userIdentity(http.HandlerFunc(h.film.addActorsToFilm))))
 
 	http.Handle("POST /sign-up", middlewareLog(http.HandlerFunc(h.user.signUp)))
 	http.Handle("POST /sign-in", middlewareLog(http.HandlerFunc(h.user.signIn)))

@@ -1,9 +1,6 @@
 package handler
 
 import (
-	"KinotekaAPI/internal/domain"
-	"KinotekaAPI/internal/service"
-	mock_service "KinotekaAPI/internal/service/mocks"
 	"bytes"
 	"context"
 	"database/sql"
@@ -11,6 +8,9 @@ import (
 	"fmt"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"kinoteka/internal/domain"
+	"kinoteka/internal/service"
+	mock_service "kinoteka/internal/service/mocks"
 	"net/http"
 	"net/http/httptest"
 	"testing"

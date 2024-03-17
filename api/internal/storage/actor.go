@@ -1,9 +1,9 @@
 package storage
 
 import (
-	"KinotekaAPI/internal/domain"
 	"database/sql"
 	"github.com/jmoiron/sqlx"
+	"kinoteka/internal/domain"
 	"time"
 )
 

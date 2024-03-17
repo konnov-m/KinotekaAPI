@@ -1,8 +1,8 @@
 package service
 
 import (
-	"KinotekaAPI/internal/domain"
-	"KinotekaAPI/internal/storage"
+	"kinoteka/internal/domain"
+	"kinoteka/internal/storage"
 )
 
 //go:generate mockgen -source=service.go -destination=mocks/mock.go

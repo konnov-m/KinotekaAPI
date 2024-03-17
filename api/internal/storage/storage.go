@@ -1,8 +1,8 @@
 package storage
 
 import (
-	"KinotekaAPI/internal/domain"
 	"github.com/jmoiron/sqlx"
+	"kinoteka/internal/domain"
 )
 
 type FilmStorage interface {

@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"KinotekaAPI/internal/domain"
-	"KinotekaAPI/internal/service"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"kinoteka/internal/domain"
+	"kinoteka/internal/service"
 	"net/http"
 )
 

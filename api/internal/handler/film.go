@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"KinotekaAPI/internal/domain"
-	"KinotekaAPI/internal/service"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"kinoteka/internal/domain"
+	"kinoteka/internal/service"
 	"net/http"
 	"strconv"
 )
@@ -314,6 +314,11 @@ func (a *FilmHandler) addActorsToFilm(w http.ResponseWriter, req *http.Request) 
 		newErrorResponse(w, err, "Can't parse data from json", http.StatusBadRequest)
 		return
 	}
+	if data.Actors == nil {
+		newErrorResponse(w, errors.New("data.Actors is nil"), "Wrong input form", http.StatusBadRequest)
+		return
+	}
+
 	err = a.ser.Film.AddActorToFilm(id, data.Actors)
 	if err != nil {
 		newErrorResponse(w, err, "Can't add actor to film", http.StatusBadRequest)

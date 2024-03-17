@@ -11,5 +11,5 @@ type Film struct {
 }
 
 func (f *Film) IsValid() bool {
-	return f.ID > 0 && f.Year > 1000 && f.Title != ""
+	return f.ID >= 0 && f.Year > 1000 && f.Title != ""
 }

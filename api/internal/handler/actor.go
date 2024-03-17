@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"KinotekaAPI/internal/domain"
-	"KinotekaAPI/internal/service"
 	"encoding/json"
 	"errors"
 	"fmt"
 	_ "github.com/lib/pq"
+	"kinoteka/internal/domain"
+	"kinoteka/internal/service"
 	"net/http"
 	"strconv"
 )

@@ -1,9 +1,9 @@
 package storage
 
 import (
-	"KinotekaAPI/internal/domain"
 	"errors"
 	"github.com/jmoiron/sqlx"
+	"kinoteka/internal/domain"
 )
 
 type userStorage struct {

@@ -1,4 +1,4 @@
-module KinotekaAPI
+module kinoteka
 
 go 1.22
 

@@ -21,5 +21,5 @@ type ActorFilm struct {
 }
 
 func (a *Actor) IsValid() bool {
-	return a.ID > 0 && a.Name != "" && a.Surname != "" && a.Sex != "" && !a.Birthday.IsZero()
+	return a.ID >= 0 && a.Name != "" && a.Surname != "" && a.Sex != "" && !a.Birthday.IsZero()
 }

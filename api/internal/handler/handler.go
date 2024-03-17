@@ -1,10 +1,10 @@
 package handler
 
 import (
-	_ "KinotekaAPI/docs"
-	"KinotekaAPI/internal/service"
 	"encoding/json"
 	httpSwagger "github.com/swaggo/http-swagger"
+	_ "kinoteka/docs"
+	"kinoteka/internal/service"
 	"log"
 	"net/http"
 )

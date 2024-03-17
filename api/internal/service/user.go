@@ -1,12 +1,12 @@
 package service
 
 import (
-	"KinotekaAPI/internal/domain"
-	"KinotekaAPI/internal/storage"
 	"crypto/sha1"
 	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
+	"kinoteka/internal/domain"
+	"kinoteka/internal/storage"
 	"time"
 )
 

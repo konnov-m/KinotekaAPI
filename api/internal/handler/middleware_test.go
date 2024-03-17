@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"KinotekaAPI/internal/service"
-	mock_service "KinotekaAPI/internal/service/mocks"
 	"errors"
 	"fmt"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"kinoteka/internal/service"
+	mock_service "kinoteka/internal/service/mocks"
 	"net/http"
 	"net/http/httptest"
 	"testing"

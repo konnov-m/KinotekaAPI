@@ -1,11 +1,11 @@
 package main
 
 import (
-	handler2 "KinotekaAPI/internal/handler"
-	"KinotekaAPI/internal/service"
-	"KinotekaAPI/internal/storage"
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	handler2 "kinoteka/internal/handler"
+	"kinoteka/internal/service"
+	"kinoteka/internal/storage"
 	"log"
 	"net/http"
 	"os"

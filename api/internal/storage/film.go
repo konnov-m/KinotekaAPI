@@ -1,11 +1,11 @@
 package storage
 
 import (
-	"KinotekaAPI/internal/domain"
 	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	"kinoteka/internal/domain"
 	"strings"
 	"time"
 )

@@ -1,9 +1,9 @@
 package service
 
 import (
-	"KinotekaAPI/internal/domain"
-	"KinotekaAPI/internal/storage"
 	"errors"
+	"kinoteka/internal/domain"
+	"kinoteka/internal/storage"
 )
 
 type filmService struct {

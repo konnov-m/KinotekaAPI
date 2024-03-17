@@ -5,3 +5,7 @@ run: build
 	docker-compose up -d
 stop:
 	docker-compose down
+generate:
+	cd ./api/internal/service && go generate
+test: generate
+	cd ./api && go test ./... -v

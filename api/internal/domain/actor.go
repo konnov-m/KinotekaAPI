@@ -19,3 +19,7 @@ type ActorFilm struct {
 	Actor Actor  `db:"actors"`
 	Films []Film `db:"films"`
 }
+
+func (a *Actor) IsValid() bool {
+	return a.ID > 0 && a.Name != "" && a.Surname != "" && a.Sex != "" && !a.Birthday.IsZero()
+}

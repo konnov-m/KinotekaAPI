@@ -36,9 +36,9 @@ func (s *filmStorage) GetFilmsSort(orderBy string, desc bool) ([]domain.Film, er
 	var sql string
 
 	if desc {
-		sql = fmt.Sprintf("%s %s %s", getFilmsSort, orderBy, "DESC")
+		sql = fmt.Sprintf("%s %s %s", getFilmsSort, orderBy, "DESC;")
 	} else {
-		sql = fmt.Sprintf("%s %s %s", getFilmsSort, orderBy, "ASC")
+		sql = fmt.Sprintf("%s %s %s", getFilmsSort, orderBy, "ASC;")
 	}
 
 	var films []domain.Film

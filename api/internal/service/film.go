@@ -3,6 +3,7 @@ package service
 import (
 	"KinotekaAPI/internal/domain"
 	"KinotekaAPI/internal/storage"
+	"errors"
 )
 
 type filmService struct {
@@ -16,6 +17,10 @@ func NewFilmService(s storage.FilmStorage) Film {
 }
 
 func (f *filmService) GetFilmsSortLike(orderBy, title string, desc bool) ([]domain.Film, error) {
+	if orderBy != "title" && orderBy != "year" {
+		orderBy = "rating"
+	}
+
 	return f.s.GetFilmsSortLike(orderBy, title, desc)
 }
 
@@ -24,6 +29,10 @@ func (f *filmService) GetFilmsLike(title string) ([]domain.Film, error) {
 }
 
 func (f *filmService) GetFilmsSort(orderBy string, desc bool) ([]domain.Film, error) {
+	if orderBy != "title" && orderBy != "year" {
+		orderBy = "rating"
+	}
+
 	return f.s.GetFilmsSort(orderBy, desc)
 }
 
@@ -32,10 +41,16 @@ func (f *filmService) GetFilm(id int64) (domain.Film, error) {
 }
 
 func (f *filmService) CreateFilm(a domain.Film) error {
+	if !a.IsValid() {
+		return errors.New("film is not valid")
+	}
 	return f.s.CreateFilm(a)
 }
 
 func (f *filmService) UpdateFilm(a domain.Film) error {
+	if !a.IsValid() {
+		return errors.New("film is not valid")
+	}
 	return f.s.UpdateFilm(a)
 }
 

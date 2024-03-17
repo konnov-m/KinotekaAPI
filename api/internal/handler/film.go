@@ -156,7 +156,7 @@ func (a *FilmHandler) getFilm(w http.ResponseWriter, req *http.Request) {
 func (a *FilmHandler) createFilm(w http.ResponseWriter, req *http.Request) {
 	isAdmin, err := a.ser.User.IsAdmin(req.Context().Value("userID").(int64))
 	if err != nil {
-		newErrorResponse(w, err, "", http.StatusBadRequest)
+		newErrorResponse(w, err, "Not admin", http.StatusBadRequest)
 		return
 	}
 	if !isAdmin {
@@ -169,6 +169,7 @@ func (a *FilmHandler) createFilm(w http.ResponseWriter, req *http.Request) {
 		newErrorResponse(w, err, "Can't parse film from json", http.StatusBadRequest)
 		return
 	}
+
 	err = a.ser.Film.CreateFilm(film)
 	if err != nil {
 		newErrorResponse(w, err, "Can't create film", http.StatusBadRequest)
@@ -315,7 +316,7 @@ func (a *FilmHandler) addActorsToFilm(w http.ResponseWriter, req *http.Request) 
 	}
 	err = a.ser.Film.AddActorToFilm(id, data.Actors)
 	if err != nil {
-		newErrorResponse(w, err, "", http.StatusBadRequest)
+		newErrorResponse(w, err, "Can't add actor to film", http.StatusBadRequest)
 		return
 	}
 

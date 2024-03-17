@@ -5,6 +5,8 @@ import (
 	"KinotekaAPI/internal/storage"
 )
 
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
+
 type User interface {
 	CreateUser(user domain.User, role string) error
 	GenerateToken(login, password string) (string, error)

@@ -34,7 +34,7 @@ func (a *ActorHandler) actorsList(w http.ResponseWriter, req *http.Request) {
 	if withFilms == "true" {
 		actors, err := a.ser.Actor.GetActorsWithFilms()
 		if err != nil {
-			newErrorResponse(w, err, "", http.StatusBadRequest)
+			newErrorResponse(w, err, "Can't get actors", http.StatusBadRequest)
 			return
 		}
 		jsonData, err := json.Marshal(actors)

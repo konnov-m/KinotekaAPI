@@ -4,6 +4,7 @@ import (
 	"KinotekaAPI/internal/domain"
 	"KinotekaAPI/internal/service"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 )
@@ -27,6 +28,8 @@ type TokenResponse struct {
 	Token string `json:"token"`
 }
 
+const defaultRole = "user"
+
 // @Summary SignIn
 // @Tags sign
 // @Description login
@@ -43,6 +46,10 @@ func (h *UserHandler) signIn(w http.ResponseWriter, req *http.Request) {
 	var in signInInput
 	if err := json.NewDecoder(req.Body).Decode(&in); err != nil {
 		newErrorResponse(w, err, "Can't decode form", http.StatusBadRequest)
+		return
+	}
+	if in.Password == "" || in.Login == "" {
+		newErrorResponse(w, errors.New("wrong form. Login and password are required"), "", http.StatusBadRequest)
 		return
 	}
 
@@ -74,6 +81,13 @@ func (h *UserHandler) signUp(w http.ResponseWriter, req *http.Request) {
 	if err := json.NewDecoder(req.Body).Decode(&in); err != nil {
 		newErrorResponse(w, err, "Can't decode form", http.StatusBadRequest)
 		return
+	}
+	if in.Password == "" || in.Login == "" {
+		newErrorResponse(w, errors.New("wrong form. Login and password are required"), "", http.StatusBadRequest)
+		return
+	}
+	if in.Role == "" {
+		in.Role = defaultRole
 	}
 	user := domain.User{
 		Login:    in.Login,

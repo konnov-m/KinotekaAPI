@@ -3,6 +3,7 @@ package service
 import (
 	"KinotekaAPI/internal/domain"
 	"KinotekaAPI/internal/storage"
+	"errors"
 )
 
 type actorService struct {
@@ -24,6 +25,9 @@ func (a *actorService) GetActors() ([]domain.Actor, error) {
 }
 
 func (a *actorService) CreateActor(actor domain.Actor) error {
+	if !actor.IsValid() {
+		return errors.New("actor is not valid")
+	}
 	return a.s.CreateActor(actor)
 }
 
@@ -32,6 +36,9 @@ func (a *actorService) GetActor(id int64) (domain.Actor, error) {
 }
 
 func (a *actorService) UpdateActor(actor domain.Actor) error {
+	if !actor.IsValid() {
+		return errors.New("actor is not valid")
+	}
 	return a.s.UpdateActor(actor)
 }
 

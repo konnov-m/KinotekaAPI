@@ -66,6 +66,6 @@ func (f *filmService) SearchFilmsWithActor(substr string) ([]domain.ActorFilm, e
 	return f.s.SearchFilmsWithActor(substr)
 }
 
-func (s *filmService) AddActorToFilm(filmId int64, actorId []int64) error {
-	return s.s.AddActorToFilm(filmId, actorId)
+func (f *filmService) AddActorToFilm(filmId int64, actorId []int64) error {
+	return f.s.AddActorToFilm(filmId, actorId)
 }

@@ -48,3 +48,17 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+  prometheus:
+    image: bitnami/prometheus:latest
+    ports:
+      - 9090:9090
+    volumes:
+      - "./prometheus.yaml:/etc/prometheus/prometheus.yml"
+
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - '3000:3000'

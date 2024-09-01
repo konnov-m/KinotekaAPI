@@ -7,6 +7,8 @@ import (
 	"kinoteka/internal/service"
 	"log"
 	"net/http"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 type Handler struct {
@@ -45,6 +47,8 @@ func (h *Handler) RegisterHandlers() {
 
 	http.Handle("POST /sign-up", middlewareLog(http.HandlerFunc(h.user.signUp)))
 	http.Handle("POST /sign-in", middlewareLog(http.HandlerFunc(h.user.signIn)))
+
+	http.Handle("/metrics", promhttp.Handler())
 
 	http.HandleFunc("/swagger/", h.swaggerHandler)
 }

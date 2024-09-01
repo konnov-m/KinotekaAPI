@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"errors"
+	"kinoteka/internal/metrics"
 	"log"
 	"net/http"
 	"strings"
@@ -11,6 +12,9 @@ import (
 func middlewareLog(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Request is \"%s\". Method is %s", r.URL, r.Method)
+		if r.Method == "POST" {
+			metrics.AddPosts()
+		}
 		next.ServeHTTP(w, r)
 	})
 }

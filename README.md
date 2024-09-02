@@ -36,6 +36,10 @@ postgres_database: foxgres
 postgres_password: admin
 ```
 
+Grafana available on http://localhost:3000/
+
+Можно импортировать дашборд [Percentage posts.json](grafana%2FPercentage%20posts.json)
+
 ## TODO
 Можно сделать, но не успел:
 - Graceful Shutdown

@@ -12,8 +12,11 @@ import (
 func middlewareLog(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Request is \"%s\". Method is %s", r.URL, r.Method)
+		metrics.AddAll()
 		if r.Method == "POST" {
 			metrics.AddPosts()
+		} else if r.Method == "GET" {
+			metrics.AddGet()
 		}
 		next.ServeHTTP(w, r)
 	})

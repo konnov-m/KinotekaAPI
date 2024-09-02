@@ -4,6 +4,7 @@
 - База данных Postgresql. Подключение к базе данных с помощью <a href="https://github.com/jmoiron/sqlx">sqlx</a>
 - Регистрация и аутентификация. Работа с JWT. Middleware.
 - Тестирование с помощью <a href="https://github.com/stretchr/testify">testify</a> и <a href="https://github.com/golang/mock">gomock</a>
+- Добавлены метрики Prometheus с отображением через Grafana
 
 
 # Build
@@ -38,5 +39,4 @@ postgres_password: admin
 ## TODO
 Можно сделать, но не успел:
 - Graceful Shutdown
-- Метрики
 - Тестирование `storage` и `service`
